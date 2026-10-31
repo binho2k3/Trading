@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TJR x Quant-Edge Institutional Master Terminal | SMC & Quant Trading</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        slate: {
+                            850: '#111827',
+                            900: '#0b0f19',
+                            950: '#060911',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #060911; color: #f1f5f9; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Custom styled horizontal scrollbar for easy tab drag & scroll */
+        .custom-h-scrollbar::-webkit-scrollbar { height: 6px; }
+        .custom-h-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.9); border-radius: 4px; }
+        .custom-h-scrollbar::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.5); border-radius: 4px; }
+        .custom-h-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.9); }
+        
+        /* Touch Scrolling Smoothness for iOS Safari / Mobile */
+        .touch-scroll {
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
+
+        /* Prevent unwanted iOS Safari tap highlight overlay */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Touch-friendly input styling to prevent iOS Safari auto-zoom on focus (<16px text zooms) */
+        @media (max-width: 640px) {
+            input[type="text"],
+            input[type="number"],
+            select {
+                font-size: 16px !important;
+            }
+        }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(51, 65, 85, 0.6);
+        }
+        .glow-emerald { box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.25); }
+        .glow-amber { box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.25); }
+        .glow-rose { box-shadow: 0 0 25px -5px rgba(244, 63, 94, 0.25); }
+        .gauge-ring { transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.4s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn { animation: fadeIn 0.25s ease-out forwards; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-emerald-500/30 selection:text-emerald-300 pb-[env(safe-area-inset-bottom)]">
+
+    <!-- HEADER TELEMETRY & SYSTEM BAR -->
+    <header class="bg-slate-950/95 backdrop-blur border-b border-slate-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-3 sm:px-4 py-2 sm:py-2.5 flex flex-wrap items-center justify-between gap-2 sm:gap-3">
+            <div class="flex items-center gap-2.5 sm:gap-3">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-emerald-500 via-teal-600 to-indigo-600 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-emerald-500/20 text-base sm:text-xl border border-emerald-400/40 shrink-0">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm sm:text-base font-bold text-white leading-tight flex items-center gap-1.5 sm:gap-2">
+                        QUANT-EDGE <span class="text-emerald-400">x TJR</span>
+                        <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[9px] sm:text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-full uppercase">Q4/2026</span>
+                    </h1>
+                    <p class="text-[11px] sm:text-xs text-slate-400 hidden xs:block sm:block">Hệ Thống SMC & Giao Dịch Định Lượng</p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-1.5 sm:gap-3 text-[11px] sm:text-xs font-mono">
+                <div class="px-2 py-1 rounded bg-slate-900 border border-slate-800 flex items-center gap-1.5">
+                    <span class="text-slate-400 hidden xs:inline">NAS100:</span>
+                    <span class="text-emerald-400 font-bold">30,421 - 30,572</span>
+                </div>
+                <div class="px-2 py-1 rounded bg-slate-900 border border-slate-800 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span id="live-clock-et" class="text-slate-200">NY: --:--</span>
+                    <span class="text-slate-600 hidden xs:inline">|</span>
+                    <span id="live-clock-vn" class="text-emerald-400 font-bold hidden xs:inline">VN: --:--</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- NAVIGATION TABS WITH SCROLLBAR & DRAG CONTROLS -->
+        <div class="border-t border-slate-900 bg-slate-950/98 sticky top-[48px] sm:top-[57px] z-40">
+            <div class="max-w-7xl mx-auto px-1 sm:px-2 flex items-center gap-1">
+                <!-- Nút cuộn trái -->
+                <button onclick="scrollTabs(-180)" class="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:bg-slate-900 rounded-lg transition shrink-0 active:scale-95" title="Cuộn sang trái">
+                    <i class="fa-solid fa-chevron-left text-xs"></i>
+                </button>
+
+                <!-- Thanh chứa tab cuộn kéo mượt mà -->
+                <nav id="nav-tab-container" class="overflow-x-auto touch-scroll custom-h-scrollbar flex-1 py-1.5 sm:py-2 scroll-smooth select-none cursor-grab active:cursor-grabbing">
+                    <div class="flex gap-1.5 text-xs sm:text-sm font-medium whitespace-nowrap px-1">
+                        <button onclick="switchTab('tab-grader')" id="btn-tab-grader" class="tab-btn min-h-[40px] px-3 py-2 rounded-lg bg-slate-800 text-white font-bold flex items-center gap-1.5 transition active:scale-95">
+                            <i class="fa-solid fa-bullseye text-emerald-400"></i> 1. Quant A+ Grader
+                        </button>
+                        <button onclick="switchTab('tab-optimizer')" id="btn-tab-optimizer" class="tab-btn min-h-[40px] px-3 py-2 rounded-lg text-slate-400 hover:text-white flex items-center gap-1.5 transition active:scale-95">
+                            <i class="fa-solid fa-chart-line text-cyan-400"></i> 2. Win-Rate & Expectancy
+                        </button>
+                        <button onclick="switchTab('tab-sizer')" id="btn-tab-sizer" class="tab-btn min-h-[40px] px-3 py-2 rounded-lg text-slate-400 hover:text-white flex items-center gap-1.5 transition active:scale-95">
+                            <i class="fa-solid fa-calculator text-amber-400"></i> 3. Position Sizer
+                        </button>
+                        <button onclick="switchTab('tab-smc-liquidity')" id="btn-tab-smc-liquidity" class="tab-btn min-h-[40px] px-3 py-2 rounded-lg text-slate-400 hover:text-white flex items-center gap-1.5 transition active:scale-95">
+                            <i class="fa-solid fa-droplet text-blue-400"></i> 4. Liquidity & Sweep
+                        </button>
+                        <button onclick="switchTab('tab-fvg-ce')" id="btn-tab-fvg-ce" class="tab-btn min-h-[40px] px-3 py-2 rounded-lg text-slate-400 hover:text-white flex items-center gap-1.5 transition active:scale-95">
+                            <i class="fa-solid fa-layer-group text-purple-400"></i> 5. FVG, IFVG & 50% CE
+                        </button>
+                        <button onclick="switchTab('tab-smt-orderflow')" id="btn-tab-smt-orderflow" class="tab-btn min-h-[40px] px-3 py-2 rounded-lg text-slate-400 hover:text-white flex items-center gap-1.5 transition active:scale-95">
+                            <i class="fa-solid fa-code-compare text-teal-400"></i> 6. SMT & CVD Absorption
+                        </button>
+                        <button onclick="switchTab('tab-structure')" id="btn-tab-structure" class="tab-btn min-h-[40px] px-3 py-2 rounded-lg text-slate-400 hover:text-white flex items-center gap-1.5 transition active:scale-95">
+                            <i class="fa-solid fa-sitemap text-cyan-300"></i> 7. Cấu Trúc, OB & Breaker
+                        </button>
+                        <button onclick="switchTab('tab-time-orb')" id="btn-tab-time-orb" class="tab-btn min-h-[40px] px-3 py-2 rounded-lg text-slate-400 hover:text-white flex items-center gap-1.5 transition active:scale-95">
+                            <i class="fa-solid fa-clock text-rose-400"></i> 8. Time Theory & ORB 15m
+                        </button>
+                        <button onclick="switchTab('tab-sd-target')" id="btn-tab-sd-target" class="tab-btn min-h-[40px] px-3 py-2 rounded-lg text-slate-400 hover:text-white flex items-center gap-1.5 transition active:scale-95">
+                            <i class="fa-solid fa-ruler-combined text-emerald-300"></i> 9. Fib SD & Target
+                        </button>
+                        <button onclick="switchTab('tab-master-sim')" id="btn-tab-master-sim" class="tab-btn min-h-[40px] px-3 py-2 rounded-lg text-slate-400 hover:text-white flex items-center gap-1.5 transition active:scale-95">
+                            <i class="fa-solid fa-chess-king text-yellow-400"></i> 10. Master Execution (A-Z)
+                        </button>
+                        <button onclick="switchTab('tab-cheatsheet')" id="btn-tab-cheatsheet" class="tab-btn min-h-[40px] px-3 py-2 rounded-lg text-slate-400 hover:text-white flex items-center gap-1.5 transition active:scale-95">
+                            <i class="fa-solid fa-map text-amber-300"></i> 11. Cheat Sheet & Killzones
+                        </button>
+                        <button onclick="switchTab('tab-checklist')" id="btn-tab-checklist" class="tab-btn min-h-[40px] px-3 py-2 rounded-lg text-slate-400 hover:text-white flex items-center gap-1.5 transition active:scale-95">
+                            <i class="fa-solid fa-list-check text-emerald-400"></i> 12. Checklist & Quiz
+                        </button>
+                    </div>
+                </nav>
+
+                <!-- Nút cuộn phải -->
+                <button onclick="scrollTabs(180)" class="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:bg-slate-900 rounded-lg transition shrink-0 active:scale-95" title="Cuộn sang phải">
+                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN WORKSPACE -->
+    <main class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 flex-1 w-full space-y-4 sm:space-y-6">
+
+        <!-- ========================================================================= -->
+        <!-- TAB 1: QUANT A+ SETUP GRADER (THANG ĐIỂM 100)                             -->
+        <!-- ========================================================================= -->
+        <section id="tab-grader" class="tab-content animate-fadeIn space-y-4 sm:space-y-6">
+            <!-- Asset & Direction Control Bar -->
+            <div class="glass-panel rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                <div class="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2.5 sm:gap-3">
+                    <div>
+                        <label class="block text-[10px] sm:text-[11px] font-mono uppercase text-slate-400 mb-1">Cặp Tài Sản</label>
+                        <select id="grader-asset" onchange="updateAssetContext()" class="w-full sm:w-auto bg-slate-900 border border-slate-700 text-white text-xs sm:text-sm rounded-lg px-2.5 py-2 font-mono focus:outline-none focus:border-emerald-500">
+                            <option value="NAS100">NAS100 / US100</option>
+                            <option value="EURUSD">EUR/USD (Fiber)</option>
+                            <option value="GBPUSD">GBP/USD (Cable)</option>
+                            <option value="USDJPY">USD/JPY (Ninja)</option>
+                            <option value="XAUUSD">XAU/USD (Vàng)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] sm:text-[11px] font-mono uppercase text-slate-400 mb-1">Hướng Lệnh</label>
+                        <div class="inline-flex w-full sm:w-auto rounded-lg bg-slate-900 p-1 border border-slate-800">
+                            <button id="dir-long" onclick="setDirection('LONG')" class="flex-1 sm:flex-none min-h-[36px] px-3 py-1 rounded-md text-xs font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 transition">
+                                ▲ LONG
+                            </button>
+                            <button id="dir-short" onclick="setDirection('SHORT')" class="flex-1 sm:flex-none min-h-[36px] px-3 py-1 rounded-md text-xs font-mono font-bold text-slate-400 hover:text-slate-200 transition">
+                                ▼ SHORT
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-800">
+                    <button onclick="loadPresetAPlus()" class="flex-1 sm:flex-none min-h-[38px] px-3 py-2 rounded-lg text-xs font-mono bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 transition active:scale-95">
+                        ⚡ Setup A+ Mẫu
+                    </button>
+                    <button onclick="resetGrader()" class="flex-1 sm:flex-none min-h-[38px] px-3 py-2 rounded-lg text-xs font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition active:scale-95">
+                        ↺ Đặt Lại (0 đ)
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
+                <!-- 5 Scoring Pillars -->
+                <div class="lg:col-span-8 space-y-3 sm:space-y-4">
+                    <!-- Pillar 1 -->
+                    <div class="glass-panel rounded-xl p-3.5 sm:p-5 border-l-4 border-l-blue-500">
+                        <div class="flex items-center justify-between mb-2.5">
+                            <div>
+                                <span class="text-[10px] sm:text-[11px] font-mono uppercase text-blue-400 font-semibold">Trụ Cột 1 • Max 20 đ</span>
+                                <h3 class="text-sm sm:text-base font-bold text-white">1. Cấu Trúc Khung Lớn & Daily Bias</h3>
+                            </div>
+                            <span id="score-pillar-1" class="font-mono text-xs sm:text-sm font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 rounded bg-blue-500/10 text-blue-400 border border-blue-500/30">0 / 20 pts</span>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="flex items-start gap-2.5 p-2.5 sm:p-3 rounded-lg bg-slate-900/80 hover:bg-slate-900 border border-slate-800 cursor-pointer transition min-h-[44px]">
+                                <input type="checkbox" data-pillar="1" data-points="8" onchange="calculateGrade()" class="grader-cb mt-1 w-4 h-4 rounded accent-emerald-500 shrink-0">
+                                <div class="flex-1 text-xs">
+                                    <div class="flex justify-between font-bold text-slate-100">
+                                        <span>Thuận Daily Bias / Cấu Trúc 4H/1H</span>
+                                        <span class="font-mono text-emerald-400 ml-1">+8 pts</span>
+                                    </div>
+                                    <p class="text-slate-400 mt-0.5 text-[11px] leading-tight">Đi cùng hướng với Draw on Liquidity Daily/4H tới PDH/PDL.</p>
+                                </div>
+                            </label>
+                            <label class="flex items-start gap-2.5 p-2.5 sm:p-3 rounded-lg bg-slate-900/80 hover:bg-slate-900 border border-slate-800 cursor-pointer transition min-h-[44px]">
+                                <input type="checkbox" data-pillar="1" data-points="6" onchange="calculateGrade()" class="grader-cb mt-1 w-4 h-4 rounded accent-emerald-500 shrink-0">
+                                <div class="flex-1 text-xs">
+                                    <div class="flex justify-between font-bold text-slate-100">
+                                        <span>Đồng thuận US10Y / DXY Context</span>
+                                        <span class="font-mono text-emerald-400 ml-1">+6 pts</span>
+                                    </div>
+                                    <p class="text-slate-400 mt-0.5 text-[11px] leading-tight">Lợi suất US10Y hạ nhiệt hỗ trợ Long NAS100.</p>
+                                </div>
+                            </label>
+                            <label class="flex items-start gap-2.5 p-2.5 sm:p-3 rounded-lg bg-slate-900/80 hover:bg-slate-900 border border-slate-800 cursor-pointer transition min-h-[44px]">
+                                <input type="checkbox" data-pillar="1" data-points="6" onchange="calculateGrade()" class="grader-cb mt-1 w-4 h-4 rounded accent-emerald-500 shrink-0">
+                                <div class="flex-1 text-xs">
+                                    <div class="flex justify-between font-bold text-slate-100">
+                                        <span id="label-pd-zone">Mua tại Discount (&lt;50% EQ) / Bán Premium</span>
+                                        <span class="font-mono text-emerald-400 ml-1">+6 pts</span>
+                                    </div>
+                                    <p class="text-slate-400 mt-0.5 text-[11px] leading-tight">Không mua đuổi ở vùng Premium hoặc bán ở Discount.</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Pillar 2 -->
+                    <div class="glass-panel rounded-xl p-5 border-l-4 border-l-purple-500">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <span class="text-[11px] font-mono uppercase text-purple-400 font-semibold">Trụ Cột 2 • Tối đa 20 Điểm</span>
+                                <h3 class="text-base font-bold text-white">2. Khung Giờ Vàng Thuật Toán (Time Theory & ORB)</h3>
+                            </div>
+                            <span id="score-pillar-2" class="font-mono text-sm font-bold px-2.5 py-1 rounded bg-purple-500/10 text-purple-400 border border-purple-500/30">0 / 20 pts</span>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="flex items-start gap-3 p-3 rounded-lg bg-slate-900/80 hover:bg-slate-900 border border-slate-800 cursor-pointer transition">
+                                <input type="checkbox" data-pillar="2" data-points="12" onchange="calculateGrade()" class="grader-cb mt-1 w-4 h-4 rounded accent-emerald-500">
+                                <div class="flex-1 text-xs">
+                                    <div class="flex justify-between font-bold text-slate-100">
+                                        <span>Nằm trong Silver Bullet (10-11 AM EST) hoặc NY AM Killzone</span>
+                                        <span class="font-mono text-emerald-400">+12 pts</span>
+                                    </div>
+                                    <p class="text-slate-400 mt-0.5">Giao dịch trong đúng cửa sổ bơm thanh khoản mạnh nhất của thuật toán IPDA.</p>
+                                </div>
+                            </label>
+                            <label class="flex items-start gap-3 p-3 rounded-lg bg-slate-900/80 hover:bg-slate-900 border border-slate-800 cursor-pointer transition">
+                                <input type="checkbox" data-pillar="2" data-points="8" onchange="calculateGrade()" class="grader-cb mt-1 w-4 h-4 rounded accent-emerald-500">
+                                <div class="flex-1 text-xs">
+                                    <div class="flex justify-between font-bold text-slate-100">
+                                        <span>Xác nhận sau đóng nến ORB 15m (09:45 AM ET Filter)</span>
+                                        <span class="font-mono text-emerald-400">+8 pts</span>
+                                    </div>
+                                    <p class="text-slate-400 mt-0.5">Đã vượt qua nhịp nhiễu quét hai đầu mở cửa chứng khoán Mỹ (09:30 AM EST).</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Pillar 3 -->
+                    <div class="glass-panel rounded-xl p-5 border-l-4 border-l-emerald-500">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <span class="text-[11px] font-mono uppercase text-emerald-400 font-semibold">Trụ Cột 3 • Tối đa 25 Điểm (Trọng Tâm SMC)</span>
+                                <h3 class="text-base font-bold text-white">3. Quét Thanh Khoản & Phá Cấu Trúc (Sweep & CHoCH)</h3>
+                            </div>
+                            <span id="score-pillar-3" class="font-mono text-sm font-bold px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">0 / 25 pts</span>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="flex items-start gap-3 p-3 rounded-lg bg-slate-900/80 hover:bg-slate-900 border border-slate-800 cursor-pointer transition">
+                                <input type="checkbox" data-pillar="3" data-points="10" onchange="calculateGrade()" class="grader-cb mt-1 w-4 h-4 rounded accent-emerald-500">
+                                <div class="flex-1 text-xs">
+                                    <div class="flex justify-between font-bold text-slate-100">
+                                        <span>Đã xảy ra Sweep SSL / BSL (Judas Swing + Sweep & Reclaim)</span>
+                                        <span class="font-mono text-emerald-400">+10 pts</span>
+                                    </div>
+                                    <p class="text-slate-400 mt-0.5">BẮT BUỘC: Giá đã đâm qua Đáy/Đỉnh cũ để kích hoạt Stop Loss đám đông rồi rút râu quay lại.</p>
+                                </div>
+                            </label>
+                            <label class="flex items-start gap-3 p-3 rounded-lg bg-slate-900/80 hover:bg-slate-900 border border-slate-800 cursor-pointer transition">
+                                <input type="checkbox" data-pillar="3" data-points="8" onchange="calculateGrade()" class="grader-cb mt-1 w-4 h-4 rounded accent-emerald-500">
+                                <div class="flex-1 text-xs">
+                                    <div class="flex justify-between font-bold text-slate-100">
+                                        <span>Xác nhận CHoCH / MSS bằng Thân Nến Đóng Cửa (Body Close Rule)</span>
+                                        <span class="font-mono text-emerald-400">+8 pts</span>
+                                    </div>
+                                    <p class="text-slate-400 mt-0.5">Thân nến khung 1M/5M đóng cửa dứt khoát vượt qua đỉnh/đáy tạo đợt quét.</p>
+                                </div>
+                            </label>
+                            <label class="flex items-start gap-3 p-3 rounded-lg bg-slate-900/80 hover:bg-slate-900 border border-slate-800 cursor-pointer transition">
+                                <input type="checkbox" data-pillar="3" data-points="7" onchange="calculateGrade()" class="grader-cb mt-1 w-4 h-4 rounded accent-emerald-500">
+                                <div class="flex-1 text-xs">
+                                    <div class="flex justify-between font-bold text-slate-100">
+                                        <span>Tạo khối FVG rõ ràng hoặc Inverse FVG (IFVG)</span>
+                                        <span class="font-mono text-emerald-400">+7 pts</span>
+                                    </div>
+                                    <p class="text-slate-400 mt-0.5">Mô hình 3 nến tạo khoảng hở FVG hoặc đâm thủng FVG cũ biến thành IFVG hỗ trợ/kháng cự.</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Pillar 4 -->
+                    <div class="glass-panel rounded-xl p-5 border-l-4 border-l-amber-500">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <span class="text-[11px] font-mono uppercase text-amber-400 font-semibold">Trụ Cột 4 • Tối đa 20 Điểm</span>
+                                <h3 class="text-base font-bold text-white">4. Xác Nhận Orderflow (SMT, CVD & VWAP)</h3>
+                            </div>
+                            <span id="score-pillar-4" class="font-mono text-sm font-bold px-2.5 py-1 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30">0 / 20 pts</span>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="flex items-start gap-3 p-3 rounded-lg bg-slate-900/80 hover:bg-slate-900 border border-slate-800 cursor-pointer transition">
+                                <input type="checkbox" data-pillar="4" data-points="7" onchange="calculateGrade()" class="grader-cb mt-1 w-4 h-4 rounded accent-emerald-500">
+                                <div class="flex-1 text-xs">
+                                    <div class="flex justify-between font-bold text-slate-100">
+                                        <span>Phân kỳ SMT Divergence giữa ES & NQ (hoặc EUR vs GBP)</span>
+                                        <span class="font-mono text-emerald-400">+7 pts</span>
+                                    </div>
+                                    <p class="text-slate-400 mt-0.5">Một chỉ số quét đáy mới nhưng chỉ số tương quan giữ vững tạo Higher Low.</p>
+                                </div>
+                            </label>
+                            <label class="flex items-start gap-3 p-3 rounded-lg bg-slate-900/80 hover:bg-slate-900 border border-slate-800 cursor-pointer transition">
+                                <input type="checkbox" data-pillar="4" data-points="7" onchange="calculateGrade()" class="grader-cb mt-1 w-4 h-4 rounded accent-emerald-500">
+                                <div class="flex-1 text-xs">
+                                    <div class="flex justify-between font-bold text-slate-100">
+                                        <span>Phân kỳ Hấp thụ CVD (CVD Absorption) tại đợt Quét</span>
+                                        <span class="font-mono text-emerald-400">+7 pts</span>
+                                    </div>
+                                    <p class="text-slate-400 mt-0.5">Lực bán đuổi Market bị tường Buy Limit của tổ chức hấp thụ hoàn toàn.</p>
+                                </div>
+                            </label>
+                            <label class="flex items-start gap-3 p-3 rounded-lg bg-slate-900/80 hover:bg-slate-900 border border-slate-800 cursor-pointer transition">
+                                <input type="checkbox" data-pillar="4" data-points="6" onchange="calculateGrade()" class="grader-cb mt-1 w-4 h-4 rounded accent-emerald-500">
+                                <div class="flex-1 text-xs">
+                                    <div class="flex justify-between font-bold text-slate-100">
+                                        <span>Đồng thuận Session VWAP & Dynamic EMA 9/21</span>
+                                        <span class="font-mono text-emerald-400">+6 pts</span>
+                                    </div>
+                                    <p class="text-slate-400 mt-0.5">Giá giữ vững trên Session VWAP (khi Long) và EMA 9 cắt lên EMA 21.</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Pillar 5 -->
+                    <div class="glass-panel rounded-xl p-3.5 sm:p-5 border-l-4 border-l-cyan-500">
+                        <div class="flex items-center justify-between mb-2.5">
+                            <div>
+                                <span class="text-[10px] sm:text-[11px] font-mono uppercase text-cyan-400 font-semibold">Trụ Cột 5 • Max 15 đ</span>
+                                <h3 class="text-sm sm:text-base font-bold text-white">5. Tối Ưu Entry 50% CE & R:R Rủi Ro</h3>
+                            </div>
+                            <span id="score-pillar-5" class="font-mono text-xs sm:text-sm font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">0 / 15 pts</span>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="flex items-start gap-2.5 p-2.5 sm:p-3 rounded-lg bg-slate-900/80 hover:bg-slate-900 border border-slate-800 cursor-pointer transition min-h-[44px]">
+                                <input type="checkbox" data-pillar="5" data-points="5" onchange="calculateGrade()" class="grader-cb mt-1 w-4 h-4 rounded accent-emerald-500 shrink-0">
+                                <div class="flex-1 text-xs">
+                                    <div class="flex justify-between font-bold text-slate-100">
+                                        <span>Đặt Limit tại 50% CE của FVG</span>
+                                        <span class="font-mono text-emerald-400 ml-1">+5 pts</span>
+                                    </div>
+                                    <p class="text-slate-400 mt-0.5 text-[11px] leading-tight">Vào lệnh tại trung điểm 50% FVG giúp giảm SL distance và đẩy R:R &gt; 1:3.0.</p>
+                                </div>
+                            </label>
+                            <label class="flex items-start gap-2.5 p-2.5 sm:p-3 rounded-lg bg-slate-900/80 hover:bg-slate-900 border border-slate-800 cursor-pointer transition min-h-[44px]">
+                                <input type="checkbox" data-pillar="5" data-points="5" onchange="calculateGrade()" class="grader-cb mt-1 w-4 h-4 rounded accent-emerald-500 shrink-0">
+                                <div class="flex-1 text-xs">
+                                    <div class="flex justify-between font-bold text-slate-100">
+                                        <span>SL bao gồm Đệm Spread & Target Fib SD</span>
+                                        <span class="font-mono text-emerald-400 ml-1">+5 pts</span>
+                                    </div>
+                                    <p class="text-slate-400 mt-0.5 text-[11px] leading-tight">SL ngoài Extreme Wick + đệm ma sát; TP căn theo Fib SD -2.0..-2.5.</p>
+                                </div>
+                            </label>
+                            <label class="flex items-start gap-2.5 p-2.5 sm:p-3 rounded-lg bg-slate-900/80 hover:bg-slate-900 border border-slate-800 cursor-pointer transition min-h-[44px]">
+                                <input type="checkbox" data-pillar="5" data-points="5" onchange="calculateGrade()" class="grader-cb mt-1 w-4 h-4 rounded accent-emerald-500 shrink-0">
+                                <div class="flex-1 text-xs">
+                                    <div class="flex justify-between font-bold text-slate-100">
+                                        <span>Tránh Tin Đỏ & Rủi ro &le; 1%</span>
+                                        <span class="font-mono text-emerald-400 ml-1">+5 pts</span>
+                                    </div>
+                                    <p class="text-slate-400 mt-0.5 text-[11px] leading-tight">Không giao dịch trước tin CPI/NFP 15m, không nhồi lệnh tương quan.</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Score Gauge Card -->
+                <div class="lg:col-span-4 lg:sticky lg:top-28 space-y-4">
+                    <div id="grader-card" class="glass-panel rounded-2xl p-4 sm:p-6 text-center glow-rose transition-all duration-300">
+                        <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-1">
+                            <span>QUANT SCORE ENGINE</span>
+                            <span id="grader-badge-asset" class="text-emerald-400 font-bold">NAS100 • LONG</span>
+                        </div>
+
+                        <!-- SVG Gauge Responsive Container -->
+                        <div class="relative w-36 h-36 sm:w-48 sm:h-48 mx-auto my-2 sm:my-4 flex items-center justify-center">
+                            <svg class="w-full h-full -rotate-90 transform" viewBox="0 0 160 160">
+                                <circle cx="80" cy="80" r="68" stroke="#1e293b" stroke-width="12" fill="transparent" />
+                                <circle id="gauge-circle" cx="80" cy="80" r="68" stroke="#f43f5e" stroke-width="12" stroke-dasharray="427.25" stroke-dashoffset="427.25" stroke-linecap="round" fill="transparent" class="gauge-ring" />
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span id="total-score-num" class="text-3xl sm:text-5xl font-extrabold font-mono text-white tracking-tight">0</span>
+                                <span class="text-[10px] sm:text-xs font-mono uppercase text-slate-400 mt-0.5">/ 100 ĐIỂM</span>
+                            </div>
+                        </div>
+
+                        <!-- Verdict Banner -->
+                        <div id="verdict-box" class="rounded-xl p-3 bg-rose-500/15 border border-rose-500/40 text-rose-300 mb-3 sm:mb-4">
+                            <div id="verdict-grade" class="text-xs sm:text-base font-extrabold tracking-wide uppercase">🚫 C-GRADE / NO TRADE</div>
+                            <p id="verdict-desc" class="text-[11px] sm:text-xs mt-0.5 text-slate-200">Điểm hội tụ dưới 70. Tuyệt đối đứng ngoài thị trường.</p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 text-left font-mono text-[11px] sm:text-xs mb-3">
+                            <div class="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800">
+                                <span class="text-slate-400 block text-[9px] sm:text-[10px]">RỦI RO KHUYẾN NGHỊ</span>
+                                <span id="rec-risk" class="text-xs sm:text-sm font-bold text-rose-400">0.0% Vốn</span>
+                            </div>
+                            <div class="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800">
+                                <span class="text-slate-400 block text-[9px] sm:text-[10px]">WIN RATE ƯỚC TÍNH</span>
+                                <span id="rec-winrate" class="text-xs sm:text-sm font-bold text-slate-200">~32% (Âm)</span>
+                            </div>
+                        </div>
+
+                        <!-- Breakdown Mini Bars -->
+                        <div class="space-y-1.5 text-left text-[11px] border-t border-slate-800 pt-3">
+                            <div class="flex justify-between text-slate-400">
+                                <span>1. Daily Bias & Macro</span>
+                                <span id="mini-p1" class="font-mono text-slate-200">0/20</span>
+                            </div>
+                            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                <div id="bar-p1" class="h-full bg-blue-500 transition-all duration-300" style="width: 0%"></div>
+                            </div>
+
+                            <div class="flex justify-between text-slate-400 pt-0.5">
+                                <span>2. Time Theory & ORB</span>
+                                <span id="mini-p2" class="font-mono text-slate-200">0/20</span>
+                            </div>
+                            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                <div id="bar-p2" class="h-full bg-purple-500 transition-all duration-300" style="width: 0%"></div>
+                            </div>
+
+                            <div class="flex justify-between text-slate-400 pt-0.5">
+                                <span>3. Sweep & CHoCH (SMC)</span>
+                                <span id="mini-p3" class="font-mono text-slate-200">0/25</span>
+                            </div>
+                            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                <div id="bar-p3" class="h-full bg-emerald-500 transition-all duration-300" style="width: 0%"></div>
+                            </div>
+
+                            <div class="flex justify-between text-slate-400 pt-0.5">
+                                <span>4. SMT / CVD / VWAP</span>
+                                <span id="mini-p4" class="font-mono text-slate-200">0/20</span>
+                            </div>
+                            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                <div id="bar-p4" class="h-full bg-amber-500 transition-all duration-300" style="width: 0%"></div>
+                            </div>
+
+                            <div class="flex justify-between text-slate-400 pt-0.5">
+                                <span>5. 50% CE FVG & Risk</span>
+                                <span id="mini-p5" class="font-mono text-slate-200">0/15</span>
+                            </div>
+                            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                <div id="bar-p5" class="h-full bg-cyan-500 transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 2: TỐI ƯU WIN-RATE & MATHEMATICAL EXPECTANCY (EQUITY CURVE SIM)        -->
+        <!-- ========================================================================= -->
+        <section id="tab-optimizer" class="tab-content hidden animate-fadeIn space-y-6">
+            <div class="glass-panel rounded-xl p-5 border-l-4 border-l-emerald-500 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                <div>
+                    <span class="text-xs font-mono uppercase text-emerald-400 font-semibold">Phương Trình Kỳ Vọng Toán Học (Mathematical Expectancy)</span>
+                    <h2 class="text-lg sm:text-xl font-bold text-white mt-0.5">Tại Sao Lọc Định Lượng Giúp Tăng Vọt Tỷ Lệ Thắng & Kỳ Vọng Lợi Nhuận?</h2>
+                    <p class="text-xs text-slate-400 mt-1">Bật/tắt 4 bộ lọc dưới đây để xem sự biến đổi trực quan của Đường Cong Vốn (Equity Curve) qua 50 lệnh thực chiến.</p>
+                </div>
+                <div class="px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 font-mono text-xs sm:text-sm text-emerald-300 whitespace-nowrap">
+                    E = (Win% × Avg_Win) - (Loss% × Avg_Loss)
+                </div>
+            </div>
+
+            <!-- 4 Interactive Filter Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div id="filter-card-1" onclick="toggleQuantFilter(1)" class="glass-panel rounded-xl p-5 cursor-pointer border-2 border-slate-800 hover:border-emerald-500/50 transition">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="chk-filter-1" class="w-4 h-4 rounded accent-emerald-500 pointer-events-none">
+                            <span class="text-xs font-mono uppercase px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">Bộ Lọc #1 • +12% Win Rate</span>
+                        </div>
+                        <span class="text-xs font-mono text-slate-400">Sweep + Reclaim (SMC Core)</span>
+                    </div>
+                    <h3 class="text-base font-bold text-white mt-2">Đổi từ Breakout Ngây Thơ sang "Sweep + Reclaim"</h3>
+                    <p class="text-xs text-slate-300 mt-1">Thay vì đánh Breakout bẫy giá, bắt buộc đợi giá đâm qua Đỉnh/Đáy phiên Á quét thanh khoản (Judas Swing) rồi đóng nến quay lại.</p>
+                </div>
+
+                <div id="filter-card-2" onclick="toggleQuantFilter(2)" class="glass-panel rounded-xl p-5 cursor-pointer border-2 border-slate-800 hover:border-emerald-500/50 transition">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="chk-filter-2" class="w-4 h-4 rounded accent-emerald-500 pointer-events-none">
+                            <span class="text-xs font-mono uppercase px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">Bộ Lọc #2 • +1.1R Lợi Nhuận</span>
+                        </div>
+                        <span class="text-xs font-mono text-slate-400">50% CE FVG Limit</span>
+                    </div>
+                    <h3 class="text-base font-bold text-white mt-2">Vào Lệnh Limit Tại Trung Điểm 50% CE FVG</h3>
+                    <p class="text-xs text-slate-300 mt-1">Đặt Limit tại <code class="text-cyan-300">CE = (High + Low) / 2</code> thay vì Market Order giúp giảm 35-45% SL distance và đẩy R:R từ 1:2.0 lên 1:3.2+.</p>
+                </div>
+
+                <div id="filter-card-3" onclick="toggleQuantFilter(3)" class="glass-panel rounded-xl p-5 cursor-pointer border-2 border-slate-800 hover:border-emerald-500/50 transition">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="chk-filter-3" class="w-4 h-4 rounded accent-emerald-500 pointer-events-none">
+                            <span class="text-xs font-mono uppercase px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30">Bộ Lọc #3 • +9% Win Rate</span>
+                        </div>
+                        <span class="text-xs font-mono text-slate-400">SMT & CVD Absorption</span>
+                    </div>
+                    <h3 class="text-base font-bold text-white mt-2">Phân Kỳ SMT Divergence + Hấp Thụ CVD</h3>
+                    <p class="text-xs text-slate-300 mt-1">Loại bỏ lệnh giả bằng cách kiểm tra SMT (NQ quét đáy mới nhưng ES tạo Higher Low) và CVD Absorption cạn kiệt lực bán.</p>
+                </div>
+
+                <div id="filter-card-4" onclick="toggleQuantFilter(4)" class="glass-panel rounded-xl p-5 cursor-pointer border-2 border-slate-800 hover:border-emerald-500/50 transition">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="chk-filter-4" class="w-4 h-4 rounded accent-emerald-500 pointer-events-none">
+                            <span class="text-xs font-mono uppercase px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/30">Bộ Lọc #4 • +7% WR & +0.5R</span>
+                        </div>
+                        <span class="text-xs font-mono text-slate-400">ORB 15m & Session VWAP</span>
+                    </div>
+                    <h3 class="text-base font-bold text-white mt-2">Xác Nhận Sau ORB 15m (09:45 ET) + Session VWAP</h3>
+                    <p class="text-xs text-slate-300 mt-1">Giao dịch sau 09:45 AM ET khi xu hướng đã đồng thuận với Session VWAP và dải băng EMA 9/21.</p>
+                </div>
+            </div>
+
+            <!-- Equity Curve Simulator Controls & Canvas -->
+            <div class="glass-panel rounded-2xl p-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                    <div class="lg:col-span-5 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-base font-bold text-white">Mô Phỏng Đường Cong Vốn (50 Lệnh)</h3>
+                            <button onclick="activateAllFilters()" class="text-xs font-mono px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 transition">
+                                ✓ Bật Cả 4 Bộ Lọc
+                            </button>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-mono mb-1">
+                                <span class="text-slate-300">TỶ LỆ THẮNG (WIN RATE %):</span>
+                                <span id="lbl-sim-wr" class="text-emerald-400 font-bold text-sm">58%</span>
+                            </div>
+                            <input type="range" id="slider-wr" min="25" max="80" step="1" value="58" oninput="updateSimulatorFromSliders()" class="w-full h-2 bg-slate-800 rounded cursor-pointer accent-emerald-500">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-mono mb-1">
+                                <span class="text-slate-300">HỆ SỐ R:R (RISK-TO-REWARD):</span>
+                                <span id="lbl-sim-rr" class="text-cyan-400 font-bold text-sm">1 : 2.8</span>
+                            </div>
+                            <input type="range" id="slider-rr" min="1.0" max="4.5" step="0.1" value="2.8" oninput="updateSimulatorFromSliders()" class="w-full h-2 bg-slate-800 rounded cursor-pointer accent-cyan-500">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-mono mb-1">
+                                <span class="text-slate-300">RỦI RO MỖI LỆNH (% VỐN):</span>
+                                <span id="lbl-sim-risk" class="text-amber-400 font-bold text-sm">1.0%</span>
+                            </div>
+                            <input type="range" id="slider-risk" min="0.25" max="2.0" step="0.25" value="1.0" oninput="updateSimulatorFromSliders()" class="w-full h-2 bg-slate-800 rounded cursor-pointer accent-amber-500">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 pt-2">
+                            <div class="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+                                <span class="text-[10px] font-mono text-slate-400 block">KỲ VỌNG / LỆNH</span>
+                                <span id="sim-expectancy-r" class="text-lg font-mono font-extrabold text-emerald-400">+1.20 R</span>
+                                <span id="sim-expectancy-pct" class="block text-xs font-mono text-slate-400 mt-0.5">(+1.20% vốn / lệnh)</span>
+                            </div>
+                            <div class="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+                                <span class="text-[10px] font-mono text-slate-400 block">TỔNG LỢI NHUẬN (50 LỆNH)</span>
+                                <span id="sim-total-return" class="text-lg font-mono font-extrabold text-white">+60.2 R</span>
+                                <span id="sim-profit-factor" class="block text-xs font-mono text-cyan-400 mt-0.5">Profit Factor: 3.87</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-7 bg-slate-950/90 border border-slate-800 rounded-xl p-4">
+                        <div class="flex items-center justify-between gap-2 mb-3 text-xs font-mono">
+                            <span class="text-slate-300 font-bold">MÔ PHỎNG ĐƯỜNG CONG VỐN (VỐN ĐẦU $10,000)</span>
+                            <div class="flex items-center gap-3">
+                                <span class="flex items-center gap-1 text-emerald-400"><span class="w-3 h-0.5 bg-emerald-400 inline-block"></span> Quant-SMC</span>
+                                <span class="flex items-center gap-1 text-rose-400"><span class="w-3 h-0.5 bg-rose-500 inline-block"></span> Ngây thơ</span>
+                            </div>
+                        </div>
+                        <div class="w-full h-64 relative">
+                            <svg id="equity-svg" viewBox="0 0 600 220" class="w-full h-full overflow-visible"></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 3: POSITION SIZER & MARKET FRICTION ADJUSTER                          -->
+        <!-- ========================================================================= -->
+        <section id="tab-sizer" class="tab-content hidden animate-fadeIn space-y-6">
+            <div class="glass-panel rounded-xl p-5 border-l-4 border-l-amber-500 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                <div>
+                    <span class="text-xs font-mono uppercase text-amber-400 font-semibold">Công Thức Quản Trị Rủi Ro Ma Sát Thị Trường (Market Friction Sizer)</span>
+                    <h2 class="text-lg sm:text-xl font-bold text-white mt-0.5">Máy Tính Khối Lượng Lệnh Chuẩn & Đệm Spread / Slippage</h2>
+                    <p class="text-xs text-slate-400 mt-1">Tự động cộng bộ đệm Spread + Slippage vào SL và làm tròn xuống (<code class="text-emerald-300">Floor</code>) để bảo vệ rủi ro tối đa.</p>
+                </div>
+                <div class="px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 font-mono text-xs text-amber-300">
+                    Q = Floor( (Balance × Risk%) / ((SL_cấu_trúc + Spread + Slippage) × V_đơn_vị) )
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-7 space-y-5">
+                    <div class="glass-panel rounded-xl p-6 space-y-4">
+                        <h3 class="text-base font-bold text-white border-b border-slate-800 pb-2">1. Thông Số Tài Khoản & Hợp Đồng</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-mono text-slate-300 mb-1">Số Dư Tài Khoản (USD)</label>
+                                <input type="number" id="pos-balance" value="50000" min="100" step="500" oninput="calculatePositionSize()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm font-mono text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-mono text-slate-300 mb-1">Rủi Ro Cho Phép (% Vốn)</label>
+                                <div class="flex gap-2">
+                                    <input type="number" id="pos-risk-pct" value="1.0" min="0.1" max="5" step="0.1" oninput="calculatePositionSize()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm font-mono text-emerald-400 font-bold focus:outline-none focus:border-emerald-500">
+                                    <button onclick="setQuickRisk(0.5)" class="px-2.5 py-1 rounded bg-slate-800 text-xs font-mono text-slate-300">0.5%</button>
+                                    <button onclick="setQuickRisk(1.0)" class="px-2.5 py-1 rounded bg-emerald-500/20 text-xs font-mono text-emerald-300 border border-emerald-500/30">1.0%</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-mono text-slate-300 mb-1">Loại Hợp Đồng Giao Dịch</label>
+                                <select id="pos-contract" onchange="onContractChange()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm font-mono text-white focus:outline-none focus:border-emerald-500">
+                                    <option value="MNQ">MNQ Futures (Micro Nasdaq - $2 / point)</option>
+                                    <option value="NQ">NQ Futures (E-mini Nasdaq Chuẩn - $20 / point)</option>
+                                    <option value="NAS_CFD_1">NAS100 / US100 CFD ($1 / point / lot)</option>
+                                    <option value="NAS_CFD_10">NAS100 / US100 CFD ($10 / point / lot)</option>
+                                    <option value="FX_USD">Forex Major USD-Quoted ($10 / pip / lot)</option>
+                                    <option value="XAU">XAU/USD Gold ($10 / 0.1 giá / lot)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-mono text-slate-300 mb-1">SL Cấu Trúc (Points / Pips)</label>
+                                <input type="number" id="pos-sl-struct" value="35" min="1" step="1" oninput="calculatePositionSize()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm font-mono text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-mono text-slate-300 mb-1">Đệm Spread + Slippage (Points / Pips)</label>
+                                <input type="number" id="pos-sl-buffer" value="3.5" min="0" step="0.5" oninput="calculatePositionSize()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm font-mono text-cyan-300 focus:outline-none focus:border-emerald-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 50% CE FVG Calculator Helper -->
+                    <div class="glass-panel rounded-xl p-6 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-base font-bold text-white">2. Công Cụ Tính Nhanh Entry 50% CE FVG & Target</h3>
+                            <span class="text-xs font-mono text-cyan-400">CE = (High + Low) / 2</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs font-mono text-slate-400 mb-1">High FVG</label>
+                                <input type="number" id="ce-high" value="30180.0" step="0.5" oninput="calculateCEHelper()" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-xs font-mono text-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-mono text-slate-400 mb-1">Low FVG</label>
+                                <input type="number" id="ce-low" value="30120.0" step="0.5" oninput="calculateCEHelper()" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-xs font-mono text-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-mono text-slate-400 mb-1">Extreme Swing SL</label>
+                                <input type="number" id="ce-swing-sl" value="30095.0" step="0.5" oninput="calculateCEHelper()" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-xs font-mono text-rose-300">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                            <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+                                <span class="text-[10px] font-mono text-slate-400 block">ENTRY LIMIT 50% CE</span>
+                                <span id="out-ce-price" class="text-base font-mono font-bold text-cyan-400">30,150.00</span>
+                            </div>
+                            <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+                                <span class="text-[10px] font-mono text-slate-400 block">KHOẢNG CÁCH SL</span>
+                                <span id="out-ce-dist" class="text-base font-mono font-bold text-white">55.00 pts</span>
+                            </div>
+                            <div class="p-3 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between">
+                                <div>
+                                    <span class="text-[10px] font-mono text-slate-400 block">TARGET TP (2.5R)</span>
+                                    <span id="out-ce-tp" class="text-base font-mono font-bold text-emerald-400">30,287.50</span>
+                                </div>
+                                <button onclick="applyCEToSizer()" class="px-2.5 py-1.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-xs font-mono">
+                                    Áp SL
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Position Calculation Output -->
+                <div class="lg:col-span-5 space-y-5">
+                    <div class="glass-panel rounded-2xl p-6 border border-emerald-500/40 glow-emerald space-y-5">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                            <span class="text-xs font-mono uppercase text-emerald-400 font-bold">KẾT QUẢ ĐỊNH CỠ VỊ THẾ TỐI ƯU</span>
+                            <span id="out-unit-label" class="text-xs font-mono px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-700">$2.00 / point</span>
+                        </div>
+
+                        <div class="text-center py-4 bg-slate-950/80 rounded-xl border border-slate-800">
+                            <span class="text-xs font-mono uppercase text-slate-400 block">KHỐI LƯỢNG VÀO LỆNH TỐI ĐA (LÀM TRÒN XUỐNG)</span>
+                            <div id="out-pos-size" class="text-4xl sm:text-5xl font-extrabold font-mono text-emerald-400 my-2">6 Hợp đồng</div>
+                            <span id="out-raw-size" class="text-xs font-mono text-slate-400">Khối lượng thô: 6.49 hợp đồng</span>
+                        </div>
+
+                        <div class="space-y-2.5 font-mono text-xs">
+                            <div class="flex justify-between p-2.5 rounded bg-slate-900">
+                                <span class="text-slate-400">Ngân sách rủi ro tối đa:</span>
+                                <span id="out-max-risk-usd" class="text-white font-bold">$500.00</span>
+                            </div>
+                            <div class="flex justify-between p-2.5 rounded bg-slate-900">
+                                <span class="text-slate-400">Tổng SL thực tế (SL + Đệm):</span>
+                                <span id="out-total-sl" class="text-cyan-300 font-bold">38.5 points</span>
+                            </div>
+                            <div class="flex justify-between p-2.5 rounded bg-slate-900">
+                                <span class="text-slate-400">Rủi ro trên mỗi 1 HĐ / Lot:</span>
+                                <span id="out-risk-per-unit" class="text-slate-200">$77.00</span>
+                            </div>
+                            <div class="flex justify-between p-2.5 rounded bg-emerald-500/10 border border-emerald-500/30">
+                                <span class="text-emerald-300">Số tiền rủi ro thực tế sau Floor:</span>
+                                <span id="out-actual-risk-usd" class="text-emerald-400 font-bold">$462.00 (0.92% vốn)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 4: SMC CORE - LIQUIDITY & SWEEPS (TJR BOOT CAMP)                      -->
+        <!-- ========================================================================= -->
+        <section id="tab-smc-liquidity" class="tab-content hidden animate-fadeIn space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+                <h2 class="text-xl font-bold text-blue-400 flex items-center gap-2 mb-3">
+                    <i class="fa-solid fa-droplet text-blue-400"></i> 4. Khái Niệm Thanh Khoản (Liquidity & Sweeps)
+                </h2>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    <b>"NO SWEEP = NO TRADE"</b>. Thanh khoản là tập hợp các lệnh dừng lỗ (Stop Losses) tích tụ tại các Đỉnh cũ (BSL - Buy-side Liquidity) hoặc Đáy cũ (SSL - Sell-side Liquidity). Smart Money bắt buộc phải đẩy giá quét thanh khoản này trước khi tạo sóng thực sự.
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-4 my-4">
+                    <div class="bg-slate-950 p-4 rounded-xl border border-amber-500/30 space-y-1 text-xs">
+                        <span class="font-bold text-amber-300 block">▲ Buy-side Liquidity (BSL)</span>
+                        <p class="text-slate-300">• Vị trí: Phía trên Đỉnh cũ (Old Highs, PDH, Session Highs).</p>
+                        <p class="text-slate-400">• Tập trung lệnh Buy Stops & Stop Losses của người đánh Short.</p>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-rose-500/30 space-y-1 text-xs">
+                        <span class="font-bold text-rose-300 block">▼ Sell-side Liquidity (SSL)</span>
+                        <p class="text-slate-300">• Vị trí: Phía dưới Đáy cũ (Old Lows, PDL, Session Lows).</p>
+                        <p class="text-slate-400">• Tập trung lệnh Sell Stops & Stop Losses của người đánh Long.</p>
+                    </div>
+                </div>
+
+                <!-- Interactive Sweep Simulation -->
+                <div class="bg-slate-950 p-6 rounded-xl border border-slate-800 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-white text-xs">Mô Phỏng Pha Quét Thanh Khoản (Sweep + Reclaim)</h3>
+                        <div class="flex gap-2">
+                            <button onclick="simSweep('ssl')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded text-xs transition">Sweep SSL (Long Setup)</button>
+                            <button onclick="simSweep('bsl')" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded text-xs transition">Sweep BSL (Short Setup)</button>
+                        </div>
+                    </div>
+                    <div id="sweep-sim-render" class="bg-slate-900 border border-slate-800 rounded-lg p-6 min-h-[180px] flex items-center justify-center">
+                        <span class="text-xs text-slate-500">Nhấn nút bên trên để khởi chạy mô phỏng Liquidity Sweep!</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 5: FVG, INVERSE FVG & 50% CE OPTIMIZATION                             -->
+        <!-- ========================================================================= -->
+        <section id="tab-fvg-ce" class="tab-content hidden animate-fadeIn space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-4">
+                <h2 class="text-xl font-bold text-purple-400 flex items-center gap-2">
+                    <i class="fa-solid fa-layer-group text-purple-400"></i> 5. Fair Value Gap (FVG), Inverse FVG (IFVG) & 50% CE
+                </h2>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    FVG là khoảng trống mất cân bằng 3 nến được tạo ra do lực mua/bán áp đảo của Smart Money.
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-4 text-xs">
+                    <div class="bg-slate-950 p-4 rounded-xl border border-purple-500/30 space-y-2">
+                        <span class="font-bold text-purple-300">Quy Tắc "DO NOT SEE COLOR" Của TJR</span>
+                        <p class="text-slate-300">• Nến 1 và Nến 3 không quan trọng màu sắc xanh hay đen/đỏ.</p>
+                        <p class="text-slate-300">• Chỉ quan tâm khoảng hở giữa **High Nến 1** và **Low Nến 3** xung quanh Nến 2 thân dài.</p>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-violet-500/30 space-y-2">
+                        <span class="font-bold text-violet-300">Inverse FVG (IFVG)</span>
+                        <p class="text-slate-300">• Khi FVG cũ bị đâm thủng dứt khoát bằng **Thân Nến (Body Close)**, vai trò bị lật ngược hoàn toàn (Inversion).</p>
+                        <p class="text-slate-300">• Bearish FVG bị đâm qua $\rightarrow$ Biến thành Bullish IFVG Hỗ Trợ Mới!</p>
+                    </div>
+                </div>
+
+                <div class="bg-cyan-950/60 p-4 rounded-xl border border-cyan-500/30 text-xs space-y-1 text-cyan-200">
+                    <span class="font-bold text-cyan-300 block">💎 Tối Ưu Điểm Vào Lệnh Định Lượng: 50% CE (Consequent Encroachment)</span>
+                    <p>Thay vì đặt Mua/Bán tại mép FVG gần nhất, đặt lệnh **Limit Order tại mốc 50% CE chính giữa FVG**. Điều này giúp thu hẹp khoảng cách Stop Loss đến 40%, giảm rủi ro cắn SL oan và tăng tỷ lệ R:R trung bình lên mức **1:3.2 – 1:3.8**!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 6: SMT DIVERGENCE & ORDERFLOW ABSORPTION                              -->
+        <!-- ========================================================================= -->
+        <section id="tab-smt-orderflow" class="tab-content hidden animate-fadeIn space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-4">
+                <h2 class="text-xl font-bold text-teal-400 flex items-center gap-2">
+                    <i class="fa-solid fa-code-compare text-teal-400"></i> 6. SMT Divergence & Hấp Thụ Dòng Lệnh (CVD Absorption)
+                </h2>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    SMT (Smart Money Tool) là hiện tượng phân kỳ hành vi giá giữa các chỉ số tương quan thuận (ES vs NQ hoặc EUR/USD vs GBP/USD).
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-4 text-xs">
+                    <div class="bg-slate-950 p-4 rounded-xl border border-emerald-500/30 space-y-1">
+                        <span class="font-bold text-emerald-300 block">Bullish SMT Divergence</span>
+                        <p class="text-slate-300">• NQ đẩy xuống tạo **Lower Low** để quét SSL.</p>
+                        <p class="text-slate-300">• ES giữ vững tạo **Higher Low** (Thể hiện sức mạnh gơm hàng của tổ chức $\rightarrow$ Đảo chiều TĂNG!).</p>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-amber-500/30 space-y-1">
+                        <span class="font-bold text-amber-300 block">CVD Absorption (Hấp Thụ Dòng Lệnh)</span>
+                        <p class="text-slate-300">• Lực bán chủ động Market Order liên tục xả làm chỉ số CVD rơi sâu.</p>
+                        <p class="text-slate-300">• Nhưng giá KHÔNG THỂ giảm thêm do đụng tường **Buy Limit** của quỹ lớn $\rightarrow$ Báo hiệu cú nẩy bật giá cực mạnh!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 7: CẤU TRÚC, ORDER BLOCK & BREAKER BLOCK                              -->
+        <!-- ========================================================================= -->
+        <section id="tab-structure" class="tab-content hidden animate-fadeIn space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-4">
+                <h2 class="text-xl font-bold text-cyan-300 flex items-center gap-2">
+                    <i class="fa-solid fa-sitemap text-cyan-300"></i> 7. Phá Vỡ Cấu Trúc (BOS/CHoCH), Order Block & Breaker Block
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-4 text-xs">
+                    <div class="bg-slate-950 p-4 rounded-xl border border-cyan-500/30 space-y-2">
+                        <span class="font-bold text-cyan-300">Quy Tắc Thân Nến Đóng Cửa (Body Close Rule)</span>
+                        <p class="text-slate-300">• BOS / CHoCH bắt buộc phải có **THÂN NẾN (Body Close)** đóng cửa vượt qua Đỉnh/Đáy cũ.</p>
+                        <p class="text-slate-400">• Nếu chỉ có râu nến (Wick) đâm qua rồi rút lại, đó chỉ là nhịp **Quét Thanh Khoản (Sweep)**!</p>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-orange-500/30 space-y-2">
+                        <span class="font-bold text-orange-300">Order Block (OB) & Breaker Block (BB)</span>
+                        <p class="text-slate-300">• **OB:** Cây nến giảm cuối cùng trước đợt tăng bứt phá để lại FVG.</p>
+                        <p class="text-slate-300">• **Breaker Block:** Cây Order Block bị đâm thủng lật ngược vai trò hỗ trợ/kháng cự.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 8: TIME THEORY, SILVER BULLET & ORB 15M                               -->
+        <!-- ========================================================================= -->
+        <section id="tab-time-orb" class="tab-content hidden animate-fadeIn space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-4">
+                <h2 class="text-xl font-bold text-rose-400 flex items-center gap-2">
+                    <i class="fa-solid fa-clock text-rose-400"></i> 8. Lý Thuyết Thời Gian, Silver Bullet & Bộ Lọc ORB 15m
+                </h2>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    <b>Time > Price:</b> Thuật toán IPDA chỉ vận hành và bơm thanh khoản trong các khung giờ mở cửa cố định (New York Time EST).
+                </p>
+
+                <div class="grid md:grid-cols-3 gap-4 text-xs">
+                    <div class="bg-slate-950 p-4 rounded-xl border border-amber-500/30 space-y-1">
+                        <span class="font-bold text-amber-300">NY AM Silver Bullet</span>
+                        <p class="text-slate-200"><b>10:00 AM - 11:00 AM EST</b></p>
+                        <p class="text-slate-400">Khung giờ có tỷ lệ thắng cao nhất trong ngày cho NAS100.</p>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-purple-500/30 space-y-1">
+                        <span class="font-bold text-purple-300">Bộ Lọc ORB 15m (Opening Range)</span>
+                        <p class="text-slate-200"><b>09:30 AM - 09:45 AM EST</b></p>
+                        <p class="text-slate-400">Đợi 15 phút đầu phiên mở cửa NYSE xả nhiễu quét hai đầu trước khi xác nhận xu hướng.</p>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-blue-500/30 space-y-1">
+                        <span class="font-bold text-blue-300">London Silver Bullet</span>
+                        <p class="text-slate-200"><b>03:00 AM - 04:00 AM EST</b></p>
+                        <p class="text-slate-400">Cửa sổ giao dịch chính phiên Châu Âu cho EUR/USD và GBP/USD.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 9: FIBONACCI STANDARD DEVIATION & TARGETS                             -->
+        <!-- ========================================================================= -->
+        <section id="tab-sd-target" class="tab-content hidden animate-fadeIn space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-4">
+                <h2 class="text-xl font-bold text-emerald-300 flex items-center gap-2">
+                    <i class="fa-solid fa-ruler-combined text-emerald-300"></i> 9. Độ Lệch Chuẩn (Standard Deviation - SD) & Mức TP
+                </h2>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Sử dụng Fibonacci Extension để đo khoảng phóng chiếu sóng sau đợt thao túng (Judas Swing) hoặc biên độ tích lũy Asian Range.
+                </p>
+
+                <div class="bg-slate-950 p-4 rounded-xl border border-emerald-500/30 text-xs space-y-2 text-slate-300">
+                    <span class="font-bold text-emerald-300">Cài Đặt Thước Đo Fib Standard Deviation Của TJR:</span>
+                    <p>• <b>0 và 1:</b> Đo từ Đỉnh đến Đáy của sóng thao túng (Manipulation Leg / Sweep Wick).</p>
+                    <p>• <b>-1.0 đến -1.5:</b> Mức chốt lời từng phần (Partial Take Profit).</p>
+                    <p class="text-yellow-300 font-bold">• <b>-2.0 đến -2.5 (Gold Zone):</b> Vùng chốt lời lý tưởng có xác suất đạt tới cao nhất!</p>
+                    <p>• <b>-4.0:</b> Mục tiêu phóng chiếu tối đa (Max Extension Target).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 10: MASTER EXECUTION SIMULATOR (A-Z LIVE TRADE PROCESS)                -->
+        <!-- ========================================================================= -->
+        <section id="tab-master-sim" class="tab-content hidden animate-fadeIn space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-yellow-400 flex items-center gap-2">
+                            <i class="fa-solid fa-chess-king text-yellow-400"></i> Master Execution Blueprint: Quy Trình Thực Thi Lệnh Chuẩn TJR x Quant
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-1">Chuỗi 6 bước thực thi lệnh hoàn chỉnh từ HTF Daily Bias $\rightarrow$ NY Time $\rightarrow$ SSL Sweep $\rightarrow$ SMT/CVD $\rightarrow$ 1M CHoCH + 50% CE FVG $\rightarrow$ Target Fib SD -2.5!</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="runMasterStep()" id="btn-next-step" class="px-4 py-2 bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-bold rounded text-xs transition shadow-lg shadow-yellow-500/20 flex items-center gap-1.5">
+                            <i class="fa-solid fa-forward"></i> Bước Tiếp Theo (<span id="master-step-num">1</span>/6)
+                        </button>
+                        <button onclick="resetMasterSim()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-xs font-semibold transition">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+                <div id="master-sim-display" class="bg-slate-950 border border-yellow-500/30 rounded-xl p-6 min-h-[300px] flex justify-center items-center relative overflow-hidden">
+                    <div class="text-center space-y-2">
+                        <i class="fa-solid fa-chess-king text-4xl text-yellow-400/40 mb-2"></i>
+                        <p class="text-xs text-slate-400">Nhấn nút <b>"Bước Tiếp Theo (1/6)"</b> để khởi chạy mô phỏng quy trình giao dịch thực chiến!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 11: CHEAT SHEET & LIVE KILLZONE CONVERTER                             -->
+        <!-- ========================================================================= -->
+        <section id="tab-cheatsheet" class="tab-content hidden animate-fadeIn space-y-6">
+            <div class="glass-panel rounded-xl p-5 flex flex-wrap items-center justify-between gap-4 border-l-4 border-l-amber-500">
+                <div>
+                    <span class="text-xs font-mono uppercase text-amber-400 font-semibold">Lịch Trình Thuật Toán IPDA Q4/2026</span>
+                    <h2 class="text-lg font-bold text-white mt-0.5">Bảng Tra Cứu Khung Giờ Killzones & Mức Kỹ Thuật Trọng Yếu</h2>
+                </div>
+                <div class="flex items-center gap-2 bg-slate-900 p-1.5 rounded-xl border border-slate-800">
+                    <span class="text-xs font-mono text-slate-400 px-2">Chế độ Giờ:</span>
+                    <button id="btn-tz-dst" onclick="setTimezoneMode('EDT')" class="px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                        Giờ Mùa Hè Mỹ (EDT = VN - 11h)
+                    </button>
+                    <button id="btn-tz-std" onclick="setTimezoneMode('EST')" class="px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-slate-400 hover:text-white">
+                        Giờ Mùa Đông Mỹ (EST = VN - 12h)
+                    </button>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-xl p-6 overflow-x-auto">
+                <h3 class="text-base font-bold text-white mb-4">1. Ma Trận Khung Giờ ICT Killzones & Silver Bullet</h3>
+                <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                    <thead>
+                        <tr class="border-b border-slate-800 font-mono text-xs text-slate-400 uppercase">
+                            <th class="py-3 px-3">Khung Giờ Thuật Toán</th>
+                            <th class="py-3 px-3">Giờ New York (ET)</th>
+                            <th class="py-3 px-3 text-emerald-400">Giờ Việt Nam (GMT+7)</th>
+                            <th class="py-3 px-3">Chiến Lược Trọng Tâm</th>
+                        </tr>
+                    </thead>
+                    <tbody id="killzone-tbody" class="divide-y divide-slate-800/70 font-mono">
+                        <!-- Rendered by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 12: CHECKLIST & KNOWLEDGE QUIZ                                        -->
+        <!-- ========================================================================= -->
+        <section id="tab-checklist" class="tab-content hidden animate-fadeIn space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-4">
+                <h2 class="text-xl font-bold text-emerald-400 flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-emerald-400"></i> 12. Danh Sách Bài Tập Về Nhà & Kiểm Tra Nhanh
+                </h2>
+
+                <div class="space-y-2 text-xs text-slate-300">
+                    <label class="flex items-center gap-3 p-3 bg-slate-950 rounded-lg border border-slate-800 cursor-pointer">
+                        <input type="checkbox" class="w-4 h-4 rounded text-emerald-600 bg-slate-900 border-slate-700">
+                        <span>1. Cài đặt múi giờ TradingView về New York (EST/EDT) & đổi màu nến sang màu trung tính.</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 bg-slate-950 rounded-lg border border-slate-800 cursor-pointer">
+                        <input type="checkbox" class="w-4 h-4 rounded text-emerald-600 bg-slate-900 border-slate-700">
+                        <span>2. Thực hành tìm 5 ví dụ Sweep SSL/BSL có đóng nến CHoCH (Body Close) trên biểu đồ NQ.</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 bg-slate-950 rounded-lg border border-slate-800 cursor-pointer">
+                        <input type="checkbox" class="w-4 h-4 rounded text-emerald-600 bg-slate-900 border-slate-700">
+                        <span>3. Áp dụng công thức tính điểm vào lệnh 50% CE FVG cho 5 lệnh backtest gần nhất.</span>
+                    </label>
+                </div>
+
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3 pt-4">
+                    <h3 class="font-bold text-white text-xs">Trắc Nghiệm Kiểm Tra Kiến Thức Nhanh:</h3>
+                    <p class="text-xs text-slate-300"><b>Câu hỏi:</b> Điểm vào lệnh Limit tại 50% CE của FVG mang lại lợi ích gì lớn nhất cho Trader?</p>
+                    <div class="space-y-1.5 text-xs text-slate-300">
+                        <label class="flex items-center gap-2"><input type="radio" name="q_quiz" value="a"> Giúp lệnh luôn luôn cắn khớp 100% trường hợp.</label>
+                        <label class="flex items-center gap-2"><input type="radio" name="q_quiz" value="b"> Giảm 35-45% khoảng cách Stop Loss, giúp nâng tỷ lệ R:R lên trên 1:3.0+.</label>
+                    </div>
+                    <button onclick="checkQuiz()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 font-bold text-white rounded text-xs transition">Kiểm Tra Đáp Án</button>
+                    <div id="quiz-result" class="hidden p-3 rounded text-xs font-bold"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 border-t border-slate-900 py-4 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 font-mono">
+            QUANT-EDGE x TJR PATH TO PROFITABILITY • HỆ THỐNG GIAO DỊCH CHUẨN TỔ CHỨC Q4/2026
+        </div>
+    </footer>
+
+    <!-- SCRIPT CODE (PURE VANILLA JS) -->
+    <script>
+        let currentDirection = 'LONG';
+        let currentAsset = 'NAS100';
+        let tzMode = 'EDT';
+        let activeQuantFilters = { 1: true, 2: true, 3: false, 4: false };
+
+        const assetHints = {
+            NAS100: 'NAS100: Ưu tiên NY AM Killzone (09:30-11:00 ET), kết hợp ORB 15m + Session VWAP + 50% CE FVG.',
+            EURUSD: 'EUR/USD: Ưu tiên London Open & NY Overlap. Kiểm tra phân kỳ SMT với GBP/USD và DXY.',
+            GBPUSD: 'GBP/USD: Biến động mạnh phiên Âu (02:00-05:00 ET). Chờ Judas Swing quét đỉnh/đáy Á.',
+            USDJPY: 'USD/JPY: Nhạy cảm với US10Y và BoJ quanh 160.00. Hỗ trợ cấu trúc 154.00 - 154.70.',
+            XAUUSD: 'XAU/USD: Đồng thuận với Real Yields & DXY. Áp dụng Sweep + Reclaim phiên Âu/Mỹ.'
+        };
+
+        const killzoneSchedule = [
+            { name: 'Asian Session Range', et: '20:00 - 00:00 ET', edt_vn: '07:00 - 11:00 AM', desc: 'Accumulation bẫy giá BSL/SSL phiên Á.' },
+            { name: 'London Open Killzone', et: '02:00 - 05:00 AM ET', edt_vn: '13:00 - 16:00 PM', desc: 'Judas Swing quét biên phiên Á trước khi tạo trend.' },
+            { name: 'London Silver Bullet', et: '03:00 - 04:00 AM ET', edt_vn: '14:00 - 15:00 PM', desc: 'Cửa sổ 60m FVG phiên Âu cho EUR/USD, GBP/USD.' },
+            { name: 'NY Forex AM Killzone', et: '07:00 - 10:00 AM ET', edt_vn: '18:00 - 21:00 PM', desc: 'Giao thoa Âu-Mỹ, tin vĩ mô Mỹ 08:30 AM ET.' },
+            { name: 'NY Equity Open & ORB', et: '09:30 - 10:00 AM ET', edt_vn: '20:30 - 21:00 PM', desc: 'Mở cửa NYSE, xả nhiễu nến ORB 15m đầu phiên.' },
+            { name: 'NY AM Silver Bullet', et: '10:00 - 11:00 AM ET', edt_vn: '21:00 - 22:00 PM', desc: 'Khung Giờ Vàng tỷ lệ thắng cao nhất cho NAS100.' },
+            { name: 'NY PM Silver Bullet', et: '02:00 - 03:00 PM ET', edt_vn: '01:00 - 02:00 AM', desc: 'Tái phân phối phiên chiều Mỹ trước khi đóng cửa.' }
+        ];
+
+        // Tab Navigation & Auto-Center
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            const targetTab = document.getElementById(tabId);
+            if (targetTab) targetTab.classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-slate-800', 'text-white', 'font-bold');
+                btn.classList.add('text-slate-400');
+            });
+
+            const activeBtn = document.getElementById('btn-' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-400');
+                activeBtn.classList.add('bg-slate-800', 'text-white', 'font-bold');
+                
+                const nav = document.getElementById('nav-tab-container');
+                if (nav) {
+                    const btnRect = activeBtn.getBoundingClientRect();
+                    const navRect = nav.getBoundingClientRect();
+                    const scrollOffset = btnRect.left - navRect.left - (navRect.width / 2) + (btnRect.width / 2);
+                    nav.scrollBy({ left: scrollOffset, behavior: 'smooth' });
+                }
+            }
+
+            if (tabId === 'tab-optimizer') {
+                renderEquityCurve();
+            }
+        }
+
+        // Scroll navigation bar by amount
+        function scrollTabs(amount) {
+            const nav = document.getElementById('nav-tab-container');
+            if (nav) {
+                nav.scrollBy({ left: amount, behavior: 'smooth' });
+            }
+        }
+
+        // Enhanced Mobile Touch Gestures for Nav Bar (Touch Drag)
+        function initDragToScrollNav() {
+            const nav = document.getElementById('nav-tab-container');
+            if (!nav) return;
+            let isDown = false;
+            let startX, scrollLeft;
+
+            // Touch events for mobile screens (iPhone / iPad)
+            nav.addEventListener('touchstart', (e) => {
+                isDown = true;
+                startX = e.touches[0].pageX - nav.offsetLeft;
+                scrollLeft = nav.scrollLeft;
+            }, { passive: true });
+
+            nav.addEventListener('touchend', () => { isDown = false; });
+            nav.addEventListener('touchcancel', () => { isDown = false; });
+
+            nav.addEventListener('touchmove', (e) => {
+                if (!isDown) return;
+                const x = e.touches[0].pageX - nav.offsetLeft;
+                const walk = (x - startX) * 1.8;
+                nav.scrollLeft = scrollLeft - walk;
+            }, { passive: true });
+
+            // Mouse events for desktop browsers
+            nav.addEventListener('mousedown', (e) => {
+                isDown = true;
+                startX = e.pageX - nav.offsetLeft;
+                scrollLeft = nav.scrollLeft;
+            });
+            nav.addEventListener('mouseleave', () => { isDown = false; });
+            nav.addEventListener('mouseup', () => { isDown = false; });
+            nav.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - nav.offsetLeft;
+                const walk = (x - startX) * 2;
+                nav.scrollLeft = scrollLeft - walk;
+            });
+        }
+
+        // Grader Functions
+        function setDirection(dir) {
+            currentDirection = dir;
+            const btnLong = document.getElementById('dir-long');
+            const btnShort = document.getElementById('dir-short');
+            const label = document.getElementById('label-pd-zone');
+
+            if (dir === 'LONG') {
+                btnLong.className = 'px-3.5 py-1.5 rounded-md text-xs font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 transition';
+                btnShort.className = 'px-3.5 py-1.5 rounded-md text-xs font-mono font-bold text-slate-400 hover:text-slate-200 transition';
+                label.textContent = 'Mua tại Discount (< 50% Equilibrium của Dealing Range)';
+            } else {
+                btnShort.className = 'px-3.5 py-1.5 rounded-md text-xs font-mono font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 transition';
+                btnLong.className = 'px-3.5 py-1.5 rounded-md text-xs font-mono font-bold text-slate-400 hover:text-slate-200 transition';
+                label.textContent = 'Bán tại Premium (> 50% Equilibrium của Dealing Range)';
+            }
+            updateAssetContext();
+        }
+
+        function updateAssetContext() {
+            currentAsset = document.getElementById('grader-asset').value;
+            document.getElementById('grader-asset-hint').textContent = assetHints[currentAsset];
+            document.getElementById('grader-badge-asset').textContent = `${currentAsset} • ${currentDirection}`;
+        }
+
+        function calculateGrade() {
+            const pillarScores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+            const pillarMax = { 1: 20, 2: 20, 3: 25, 4: 20, 5: 15 };
+
+            document.querySelectorAll('.grader-cb').forEach(cb => {
+                if (cb.checked) {
+                    const p = parseInt(cb.dataset.pillar);
+                    const pts = parseInt(cb.dataset.points);
+                    pillarScores[p] += pts;
+                }
+            });
+
+            let total = 0;
+            for (let p = 1; p <= 5; p++) {
+                total += pillarScores[p];
+                document.getElementById(`score-pillar-${p}`).textContent = `${pillarScores[p]} / ${pillarMax[p]} pts`;
+                document.getElementById(`mini-p${p}`).textContent = `${pillarScores[p]}/${pillarMax[p]}`;
+                const pct = (pillarScores[p] / pillarMax[p]) * 100;
+                document.getElementById(`bar-p${p}`).style.width = `${pct}%`;
+            }
+
+            const circle = document.getElementById('gauge-circle');
+            const circumference = 427.25;
+            circle.style.strokeDashoffset = circumference - (total / 100) * circumference;
+            document.getElementById('total-score-num').textContent = total;
+
+            const card = document.getElementById('grader-card');
+            const verdictBox = document.getElementById('verdict-box');
+            const verdictGrade = document.getElementById('verdict-grade');
+            const verdictDesc = document.getElementById('verdict-desc');
+            const recRisk = document.getElementById('rec-risk');
+            const recWinrate = document.getElementById('rec-winrate');
+
+            card.classList.remove('glow-emerald', 'glow-amber', 'glow-rose');
+
+            if (total >= 85) {
+                circle.style.stroke = '#10b981';
+                card.classList.add('glow-emerald');
+                verdictBox.className = 'rounded-xl p-3.5 bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 mb-4';
+                verdictGrade.textContent = '🏆 A+ INSTITUTIONAL SETUP';
+                verdictDesc.textContent = 'Hội tụ SMC + Quant hoàn hảo. Cho phép vào lệnh full khối lượng rủi ro chuẩn.';
+                recRisk.textContent = '1.0% Vốn (Full Risk)';
+                recRisk.className = 'text-sm font-bold text-emerald-400';
+                recWinrate.textContent = '62% - 68% (Kỳ vọng +1.4R)';
+            } else if (total >= 70) {
+                circle.style.stroke = '#f59e0b';
+                card.classList.add('glow-amber');
+                verdictBox.className = 'rounded-xl p-3.5 bg-amber-500/15 border border-amber-500/40 text-amber-300 mb-4';
+                verdictGrade.textContent = '⚡ B-GRADE VALID SETUP';
+                verdictDesc.textContent = 'Thiết lập hợp lệ nhưng thiếu yếu tố xác nhận phụ. Bắt buộc giảm 50% khối lượng.';
+                recRisk.textContent = '0.5% Vốn (Half Risk)';
+                recRisk.className = 'text-sm font-bold text-amber-400';
+                recWinrate.textContent = '50% - 55% (Kỳ vọng +0.6R)';
+            } else {
+                circle.style.stroke = '#f43f5e';
+                card.classList.add('glow-rose');
+                verdictBox.className = 'rounded-xl p-3.5 bg-rose-500/15 border border-rose-500/40 text-rose-300 mb-4';
+                verdictGrade.textContent = '🚫 C-GRADE / NO TRADE';
+                verdictDesc.textContent = 'Dưới 70 điểm. Tuyệt đối đứng ngoài thị trường, nguy cơ dính bẫy giá rất cao.';
+                recRisk.textContent = '0.0% Vốn (Đứng ngoài)';
+                recRisk.className = 'text-sm font-bold text-rose-400';
+                recWinrate.textContent = '< 38% (Kỳ vọng Âm)';
+            }
+        }
+
+        function loadPresetAPlus() {
+            document.querySelectorAll('.grader-cb').forEach(cb => cb.checked = true);
+            calculateGrade();
+        }
+
+        function resetGrader() {
+            document.querySelectorAll('.grader-cb').forEach(cb => cb.checked = false);
+            calculateGrade();
+        }
+
+        // Optimizer & Equity Curve
+        function toggleQuantFilter(id) {
+            activeQuantFilters[id] = !activeQuantFilters[id];
+            syncFilterCardsUI();
+            recalcSlidersFromFilters();
+        }
+
+        function activateAllFilters() {
+            activeQuantFilters = { 1: true, 2: true, 3: true, 4: true };
+            syncFilterCardsUI();
+            recalcSlidersFromFilters();
+        }
+
+        function syncFilterCardsUI() {
+            for (let i = 1; i <= 4; i++) {
+                const card = document.getElementById(`filter-card-${i}`);
+                const chk = document.getElementById(`chk-filter-${i}`);
+                if (chk) chk.checked = activeQuantFilters[i];
+                if (card) {
+                    if (activeQuantFilters[i]) {
+                        card.classList.remove('border-slate-800');
+                        card.classList.add('border-emerald-500/70', 'bg-emerald-950/20');
+                    } else {
+                        card.classList.add('border-slate-800');
+                        card.classList.remove('border-emerald-500/70', 'bg-emerald-950/20');
+                    }
+                }
+            }
+        }
+
+        function recalcSlidersFromFilters() {
+            let wr = 38;
+            let rr = 1.2;
+
+            if (activeQuantFilters[1]) { wr += 12; rr += 0.4; }
+            if (activeQuantFilters[2]) { rr += 1.1; }
+            if (activeQuantFilters[3]) { wr += 9; }
+            if (activeQuantFilters[4]) { wr += 7; rr += 0.5; }
+
+            document.getElementById('slider-wr').value = Math.min(80, wr);
+            document.getElementById('slider-rr').value = Math.min(4.5, rr.toFixed(1));
+            updateSimulatorFromSliders();
+        }
+
+        function updateSimulatorFromSliders() {
+            const wr = parseFloat(document.getElementById('slider-wr').value);
+            const rr = parseFloat(document.getElementById('slider-rr').value);
+            const riskPct = parseFloat(document.getElementById('slider-risk').value);
+
+            document.getElementById('lbl-sim-wr').textContent = `${wr}%`;
+            document.getElementById('lbl-sim-rr').textContent = `1 : ${rr.toFixed(1)}`;
+            document.getElementById('lbl-sim-risk').textContent = `${riskPct.toFixed(2)}%`;
+
+            const winProb = wr / 100;
+            const lossProb = 1 - winProb;
+            const expectancyR = (winProb * rr) - (lossProb * 1.0);
+            const expectancyPct = expectancyR * riskPct;
+            const total50R = expectancyR * 50;
+            const profitFactor = lossProb > 0 ? (winProb * rr) / (lossProb * 1.0) : 9.99;
+
+            const expEl = document.getElementById('sim-expectancy-r');
+            expEl.textContent = `${expectancyR >= 0 ? '+' : ''}${expectancyR.toFixed(2)} R`;
+            expEl.className = `text-lg font-mono font-extrabold ${expectancyR >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+
+            document.getElementById('sim-expectancy-pct').textContent = `(${expectancyPct >= 0 ? '+' : ''}${expectancyPct.toFixed(2)}% vốn / lệnh)`;
+            document.getElementById('sim-total-return').textContent = `${total50R >= 0 ? '+' : ''}${total50R.toFixed(1)} R`;
+            document.getElementById('sim-profit-factor').textContent = `Profit Factor: ${profitFactor.toFixed(2)}`;
+
+            renderEquityCurve();
+        }
+
+        function renderEquityCurve() {
+            const svg = document.getElementById('equity-svg');
+            if (!svg) return;
+
+            const wr = parseFloat(document.getElementById('slider-wr').value) / 100;
+            const rr = parseFloat(document.getElementById('slider-rr').value);
+            const riskPct = parseFloat(document.getElementById('slider-risk').value) / 100;
+
+            const seeds = [0.42, 0.15, 0.78, 0.31, 0.52, 0.09, 0.88, 0.24, 0.63, 0.47];
+            let quantEquity = [10000];
+            let naiveEquity = [10000];
+
+            for (let i = 1; i <= 50; i++) {
+                const randVal = (seeds[i % seeds.length] + (i * 0.073)) % 1;
+                const prevQ = quantEquity[i - 1];
+                quantEquity.push(randVal < wr ? prevQ * (1 + riskPct * rr) : prevQ * (1 - riskPct));
+
+                const prevN = naiveEquity[i - 1];
+                naiveEquity.push(randVal < 0.38 ? prevN * (1 + 0.01 * 1.2) : prevN * (1 - 0.01));
+            }
+
+            const allVals = [...quantEquity, ...naiveEquity];
+            const minVal = Math.min(...allVals, 8000);
+            const maxVal = Math.max(...allVals, 13000);
+
+            const width = 600, height = 220, padX = 45, padY = 20;
+            const mapX = (i) => padX + (i / 50) * (width - padX - 15);
+            const mapY = (v) => height - padY - ((v - minVal) / (maxVal - minVal || 1)) * (height - padY * 2);
+
+            let quantPoints = quantEquity.map((v, i) => `${mapX(i).toFixed(1)},${mapY(v).toFixed(1)}`).join(' ');
+            let naivePoints = naiveEquity.map((v, i) => `${mapX(i).toFixed(1)},${mapY(v).toFixed(1)}`).join(' ');
+            const baseY = mapY(10000).toFixed(1);
+
+            svg.innerHTML = `
+                <line x1="${padX}" y1="${baseY}" x2="${width - 15}" y2="${baseY}" stroke="#334155" stroke-dasharray="4 4" stroke-width="1" />
+                <text x="5" y="${parseFloat(baseY) + 4}" fill="#94a3b8" font-size="10" font-family="JetBrains Mono">$10k</text>
+                <polyline fill="none" stroke="#f43f5e" stroke-width="2" stroke-opacity="0.75" points="${naivePoints}" />
+                <polyline fill="none" stroke="#10b981" stroke-width="3" points="${quantPoints}" />
+                <circle cx="${mapX(50)}" cy="${mapY(quantEquity[50])}" r="4" fill="#10b981" />
+                <text x="${mapX(50) - 75}" y="${Math.max(15, mapY(quantEquity[50]) - 8)}" fill="#34d399" font-size="11" font-weight="bold" font-family="JetBrains Mono">$${Math.round(quantEquity[50]).toLocaleString()}</text>
+            `;
+        }
+
+        // Sizer
+        function setQuickRisk(val) {
+            document.getElementById('pos-risk-pct').value = val;
+            calculatePositionSize();
+        }
+
+        function onContractChange() {
+            calculatePositionSize();
+        }
+
+        function calculatePositionSize() {
+            const balance = parseFloat(document.getElementById('pos-balance').value) || 0;
+            const riskPct = parseFloat(document.getElementById('pos-risk-pct').value) || 0;
+            const contract = document.getElementById('pos-contract').value;
+            const slStruct = parseFloat(document.getElementById('pos-sl-struct').value) || 0;
+            const slBuffer = parseFloat(document.getElementById('pos-sl-buffer').value) || 0;
+
+            const maxRiskUSD = balance * (riskPct / 100);
+            const totalSL = slStruct + slBuffer;
+
+            let unitValue = 2.0;
+            let isFutures = false;
+            let unitLabel = '';
+
+            if (contract === 'MNQ') { unitValue = 2.0; isFutures = true; unitLabel = '$2.00 / point / HĐ'; }
+            else if (contract === 'NQ') { unitValue = 20.0; isFutures = true; unitLabel = '$20.00 / point / HĐ'; }
+            else if (contract === 'NAS_CFD_1') { unitValue = 1.0; unitLabel = '$1.00 / point / lot'; }
+            else if (contract === 'NAS_CFD_10') { unitValue = 10.0; unitLabel = '$10.00 / point / lot'; }
+            else if (contract === 'FX_USD') { unitValue = 10.0; unitLabel = '$10.00 / pip / lot'; }
+            else if (contract === 'XAU') { unitValue = 10.0; unitLabel = '$10.00 / 0.1 giá / lot'; }
+
+            const riskPerUnit = totalSL * unitValue;
+            const rawSize = riskPerUnit > 0 ? maxRiskUSD / riskPerUnit : 0;
+            const flooredSize = isFutures ? Math.floor(rawSize) : Math.floor(rawSize * 100) / 100;
+
+            const actualRiskUSD = flooredSize * riskPerUnit;
+            const actualRiskPct = balance > 0 ? (actualRiskUSD / balance) * 100 : 0;
+
+            document.getElementById('out-unit-label').textContent = unitLabel;
+            document.getElementById('out-pos-size').textContent = isFutures ? `${flooredSize} Hợp đồng` : `${flooredSize.toFixed(2)} Lots`;
+            document.getElementById('out-raw-size').textContent = `Khối lượng thô: ${rawSize.toFixed(3)}`;
+            document.getElementById('out-max-risk-usd').textContent = `$${maxRiskUSD.toFixed(2)}`;
+            document.getElementById('out-total-sl').textContent = `${totalSL.toFixed(1)} points`;
+            document.getElementById('out-risk-per-unit').textContent = `$${riskPerUnit.toFixed(2)}`;
+            document.getElementById('out-actual-risk-usd').textContent = `$${actualRiskUSD.toFixed(2)} (${actualRiskPct.toFixed(2)}% vốn)`;
+        }
+
+        function calculateCEHelper() {
+            const high = parseFloat(document.getElementById('ce-high').value) || 0;
+            const low = parseFloat(document.getElementById('ce-low').value) || 0;
+            const swingSL = parseFloat(document.getElementById('ce-swing-sl').value) || 0;
+
+            const ce = (high + low) / 2;
+            const dist = Math.abs(ce - swingSL);
+            const isLong = swingSL < ce;
+            const tp = isLong ? ce + dist * 2.5 : ce - dist * 2.5;
+
+            document.getElementById('out-ce-price').textContent = ce.toFixed(2);
+            document.getElementById('out-ce-dist').textContent = `${dist.toFixed(2)} pts`;
+            document.getElementById('out-ce-tp').textContent = tp.toFixed(2);
+        }
+
+        function applyCEToSizer() {
+            const high = parseFloat(document.getElementById('ce-high').value) || 0;
+            const low = parseFloat(document.getElementById('ce-low').value) || 0;
+            const swingSL = parseFloat(document.getElementById('ce-swing-sl').value) || 0;
+            const ce = (high + low) / 2;
+            const dist = Math.abs(ce - swingSL);
+
+            document.getElementById('pos-sl-struct').value = dist.toFixed(1);
+            calculatePositionSize();
+        }
+
+        // Sweep Simulator (Tab 4)
+        function simSweep(dir) {
+            const render = document.getElementById('sweep-sim-render');
+            if (dir === 'ssl') {
+                render.innerHTML = `
+                    <div class="flex flex-col items-center space-y-2 animate-fadeIn">
+                        <span class="text-xs font-bold text-emerald-400 bg-emerald-950 px-3 py-1 rounded border border-emerald-500/40">
+                            SWEEP SSL: Giá đâm qua Đáy cũ (1.0850) -> Khớp Sell Stops -> Smart Money Gom Mua -> Rút râu TĂNG!
+                        </span>
+                        <div class="flex items-end gap-4 my-2">
+                            <div class="flex flex-col items-center"><span class="text-[9px] text-rose-400 font-bold mb-1">Old SSL</span><div class="w-8 h-12 bg-slate-800 border border-slate-700"></div></div>
+                            <div class="flex flex-col items-center"><div class="w-8 h-20 bg-blue-600 border border-blue-300 rounded-sm relative"><div class="absolute -bottom-6 left-1/2 -translate-x-1/2 w-1 h-8 bg-emerald-400"></div></div></div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                render.innerHTML = `
+                    <div class="flex flex-col items-center space-y-2 animate-fadeIn">
+                        <span class="text-xs font-bold text-rose-400 bg-rose-950 px-3 py-1 rounded border border-rose-500/40">
+                            SWEEP BSL: Giá vọt qua Đỉnh cũ (1.0920) -> Khớp Buy Stops -> Smart Money Xả Bán -> Rút râu GIẢM!
+                        </span>
+                        <div class="flex items-start gap-4 my-2">
+                            <div class="flex flex-col items-center"><div class="w-8 h-12 bg-slate-800 border border-slate-700"></div><span class="text-[9px] text-amber-400 font-bold mt-1">Old BSL</span></div>
+                            <div class="flex flex-col items-center"><div class="w-8 h-20 bg-slate-950 border border-slate-700 rounded-sm relative"><div class="absolute -top-6 left-1/2 -translate-x-1/2 w-1 h-8 bg-rose-500"></div></div></div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Master Step-by-Step Execution Simulator
+        let currentMasterStep = 0;
+        function runMasterStep() {
+            currentMasterStep++;
+            if (currentMasterStep > 6) currentMasterStep = 1;
+
+            document.getElementById('master-step-num').innerText = currentMasterStep < 6 ? currentMasterStep + 1 : 1;
+            const display = document.getElementById('master-sim-display');
+
+            switch (currentMasterStep) {
+                case 1:
+                    display.innerHTML = `
+                        <div class="flex flex-col items-center space-y-3 text-center animate-fadeIn w-full">
+                            <span class="text-xs font-bold text-yellow-300 bg-yellow-950/90 px-3 py-1 rounded border border-yellow-500/40">
+                                [BƯỚC 1: HTF BIAS 4H/1H]: Daily Bias TĂNG -> Đánh dấu SSL Đáy London (30,080) & Target BSL tại 30,280!
+                            </span>
+                            <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 w-full max-w-md text-left text-xs space-y-1">
+                                <p class="text-slate-300"><b>• 4H Structure:</b> Bullish Higher Highs & Higher Lows</p>
+                                <p class="text-amber-400"><b>• Key SSL (Sweep Target):</b> Đáy London Session (30,080)</p>
+                                <p class="text-emerald-400"><b>• Key BSL (Target TP):</b> Đỉnh PDH (30,280)</p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 2:
+                    display.innerHTML = `
+                        <div class="flex flex-col items-center space-y-3 text-center animate-fadeIn w-full">
+                            <span class="text-xs font-bold text-amber-300 bg-amber-950/90 px-3 py-1 rounded border border-amber-500/40">
+                                [BƯỚC 2: TIME THEORY & ORB 15M]: NY Open 09:30 AM EST -> Đợi đóng nến ORB 15m (09:45 ET) xả nhiễu!
+                            </span>
+                            <div class="p-3 bg-amber-950/60 rounded-xl border border-amber-500/40 font-mono font-bold text-amber-300 text-sm my-2">
+                                <i class="fa-solid fa-clock"></i> 09:45:00 AM EST (NY AM Silver Bullet Window)
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 3:
+                    display.innerHTML = `
+                        <div class="flex flex-col items-center space-y-3 text-center animate-fadeIn w-full">
+                            <span class="text-xs font-bold text-red-300 bg-red-950/90 px-3 py-1 rounded border border-red-500/40">
+                                [BƯỚC 3: SWEEP + SMT + CVD ABSORPTION]: Giá giật đâm qua Đáy SSL 30,080 -> SMT Divergence xuất hiện!
+                            </span>
+                            <div class="bg-slate-900 p-3 rounded-xl border border-red-500/30 text-xs text-slate-300 space-y-1 text-left">
+                                <p class="text-rose-400">✓ NQ swept low (30,065) vs ES Higher Low (4,980)</p>
+                                <p class="text-amber-400">✓ CVD absorption: Lực bán bị tường Buy Limit hấp thụ hoàn toàn!</p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 4:
+                    display.innerHTML = `
+                        <div class="flex flex-col items-center space-y-3 text-center animate-fadeIn w-full">
+                            <span class="text-xs font-bold text-cyan-300 bg-cyan-950/90 px-3 py-1 rounded border border-cyan-500/40">
+                                [BƯỚC 4: 1M CHoCH BODY CLOSE & FVG]: Thân nến 1M đóng vượt đỉnh cũ -> Tạo 1M Bullish FVG (30,120 - 30,180)!
+                            </span>
+                            <div class="p-3 bg-cyan-950/60 rounded-xl border border-cyan-500/40 text-xs text-cyan-200">
+                                <b>1M Bullish FVG Range:</b> 30,120.00 – 30,180.00 | <b>50% CE Price:</b> 30,150.00
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 5:
+                    display.innerHTML = `
+                        <div class="flex flex-col items-center space-y-3 text-center animate-fadeIn w-full">
+                            <span class="text-xs font-bold text-indigo-300 bg-indigo-950/90 px-3 py-1 rounded border border-indigo-500/40">
+                                [BƯỚC 5: QUANT ENTRY AT 50% CE FVG]: Đặt Buy Limit tại 30,150.00 -> Giá thò râu Retest đúng 50% CE khớp lệnh Mua!
+                            </span>
+                            <div class="bg-indigo-950/80 p-3 rounded-xl border border-indigo-500/40 text-xs text-indigo-200">
+                                <b>Entry:</b> 30,150.00 | <b>SL:</b> 30,095.00 (Extreme Sweep + Đệm Buffer) | <b>Risk:</b> $500 (1.0%)
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 6:
+                    display.innerHTML = `
+                        <div class="flex flex-col items-center space-y-3 text-center animate-fadeIn w-full">
+                            <span class="text-xs font-bold text-emerald-300 bg-emerald-950/90 px-3 py-1 rounded border border-emerald-500/40">
+                                [BƯỚC 6: TAKE PROFIT AT FIB SD -2.5]: Giá bứt phá vượt BSL chạm mốc Fib SD -2.5 (30,325) -> WIN +3.2R!
+                            </span>
+                            <div class="bg-emerald-950/80 p-4 rounded-xl border border-emerald-500/40 text-xs space-y-1 text-emerald-200">
+                                <p class="font-bold text-white text-sm mb-1">🎉 KẾT QUẢ GIAO DỊCH CHUẨN QUANT-SMC:</p>
+                                <p>• Khoảng SL: -55 Points ($500 / 1.0% Vốn)</p>
+                                <p>• Lợi nhuận TP: +175 Points ($1,600 / +3.2% Vốn)</p>
+                                <p class="text-yellow-300 font-bold">• Tỷ lệ Risk-to-Reward: 1 : 3.2</p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+        }
+
+        function resetMasterSim() {
+            currentMasterStep = 0;
+            document.getElementById('master-step-num').innerText = '1';
+            document.getElementById('master-sim-display').innerHTML = `
+                <div class="text-center space-y-2">
+                    <i class="fa-solid fa-chess-king text-4xl text-yellow-400/40 mb-2"></i>
+                    <p class="text-xs text-slate-400">Nhấn nút <b>"Bước Tiếp Theo (1/6)"</b> để khởi chạy mô phỏng giao dịch thực chiến!</p>
+                </div>
+            `;
+        }
+
+        function setTimezoneMode(mode) {
+            tzMode = mode;
+            document.getElementById('btn-tz-dst').className = mode === 'EDT' ? 'px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-slate-400 hover:text-white';
+            document.getElementById('btn-tz-std').className = mode === 'EST' ? 'px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-slate-400 hover:text-white';
+            renderKillzoneTable();
+        }
+
+        function renderKillzoneTable() {
+            const tbody = document.getElementById('killzone-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = killzoneSchedule.map(row => `
+                <tr class="hover:bg-slate-900/60 transition">
+                    <td class="py-3 px-3 font-bold text-white">${row.name}</td>
+                    <td class="py-3 px-3 text-slate-300">${row.et}</td>
+                    <td class="py-3 px-3 text-emerald-400 font-bold">${row.edt_vn}</td>
+                    <td class="py-3 px-3 text-slate-300">${row.desc}</td>
+                </tr>
+            `).join('');
+        }
+
+        function checkQuiz() {
+            const selected = document.querySelector('input[name="q_quiz"]:checked')?.value;
+            const res = document.getElementById('quiz-result');
+            res.classList.remove('hidden');
+
+            if (selected === 'b') {
+                res.className = 'p-3 rounded text-xs font-bold bg-emerald-950 border border-emerald-500/40 text-emerald-200';
+                res.innerText = '🎉 CHÍNH XÁC! Điểm 50% CE FVG giúp thu hẹp 35-45% SL distance, nâng tỷ lệ R:R lên trên 1:3.0+!';
+            } else {
+                res.className = 'p-3 rounded text-xs font-bold bg-rose-950 border border-rose-500/40 text-rose-200';
+                res.innerText = '❌ Chưa chính xác. Lợi ích lớn nhất của 50% CE là thu hẹp khoảng cách SL và tối ưu hóa tỷ lệ R:R!';
+            }
+        }
+
+        function updateClocks() {
+            const now = new Date();
+            const nyTime = now.toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour12: false });
+            const vnTime = now.toLocaleTimeString('en-US', { timeZone: 'Asia/Ho_Chi_Minh', hour12: false });
+
+            document.getElementById('live-clock-et').textContent = `NY: ${nyTime} ET`;
+            document.getElementById('live-clock-vn').textContent = `VN: ${vnTime} GMT+7`;
+        }
+
+        window.onload = function() {
+            calculateGrade();
+            syncFilterCardsUI();
+            updateSimulatorFromSliders();
+            calculatePositionSize();
+            calculateCEHelper();
+            renderKillzoneTable();
+            updateClocks();
+            setInterval(updateClocks, 1000);
+            initDragToScrollNav();
+            switchTab('tab-grader');
+        };
+    </script>
+</body>
+</html>
